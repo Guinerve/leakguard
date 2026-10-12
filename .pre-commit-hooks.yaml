@@ -1,0 +1,6 @@
+- id: leakguard
+  name: leakguard
+  description: Catch lookahead bias and data leakage in pandas / scikit-learn code
+  entry: leakguard check
+  language: python
+  types_or: [python, jupyter]

@@ -1,0 +1,30 @@
+[project]
+name = "leakguard"
+version = "0.1.0"
+description = "A linter that catches lookahead bias and data leakage in pandas and scikit-learn code."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = []
+
+[project.scripts]
+leakguard = "leakguard.cli:main"
+
+[project.entry-points."flake8.extension"]
+LG = "leakguard.flake8_plugin:LeakguardPlugin"
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.6", "flake8>=7"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/leakguard"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+exclude = ["tests/fixtures"]
