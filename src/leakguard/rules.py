@@ -36,4 +36,9 @@ RULES: dict[str, tuple[str, str, str]] = {
         "`fillna` with a statistic ({stat}) computed on all rows before `train_test_split` (line {split}) leaks test-set values. Compute it on the training rows only.",
         "Only reported when the fill happens earlier than a train_test_split in the same scope.",
     ),
+    "LG008": (
+        "unlagged-target-statistic",
+        "`{call}` on the target column `{col}` includes the current value, so a feature built from it for predicting `{col}` leaks it. Apply `.shift(1)` before the rolling/expanding/ewm statistic.",
+        "Heuristic: fires when the source column name looks like a target (y, target, label, ...) and no `.shift` appears in the chain. Safe if the feature predicts a different, later quantity.",
+    ),
 }

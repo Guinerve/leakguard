@@ -2,7 +2,7 @@
 
 > A linter that catches lookahead bias and data leakage in pandas and scikit-learn code.
 
-**Status:** v0.1 core built: 7 rules, CLI, notebooks, flake8 plugin, pre-commit hook · Portfolio project #4 · see `../README.md`
+**Status:** v0.1 core built: 8 rules, CLI, notebooks, flake8 plugin, pre-commit hook · Portfolio project #4 · see `../README.md`
 
 ## The idea
 
@@ -25,6 +25,7 @@ Python project managed with `uv`; target a one-command run (`uv run ...`).
   - [x] `LG005` `merge_asof(direction="forward" | "nearest")`
   - [x] `LG006` random `KFold` / `train_test_split` on time-ordered data (only when the file shows time-series signals)
   - [x] `LG007` `fillna(df.mean())` before the split it feeds
+  - [x] `LG008` rolling/expanding/ewm statistic of the target column without a prior `.shift(1)`
 - [x] Inline suppression comments (`# leakguard: ignore[LG003]`)
 - [x] CLI, `.pre-commit-hooks.yaml`, flake8 entry point (plugin class unit-tested; not yet run under a real flake8)
 - [x] Run against public notebooks (95; results below)
@@ -35,7 +36,7 @@ Python project managed with `uv`; target a one-command run (`uv run ...`).
 uv sync
 uv run leakguard check path/to/code_or_notebooks
 uv run leakguard rules
-uv run pytest -q      # 23 tests
+uv run pytest -q      # 26 tests
 ```
 
 Suppress a line with `# leakguard: ignore[LG003]` (or `# leakguard: ignore`).
@@ -48,7 +49,7 @@ Suppress a line with `# leakguard: ignore[LG003]` (or `# leakguard: ignore`).
 
 The runs drove fixes to **false positives**: `date` matched inside words like `update` (LG006); a scaler on toy data, a reused variable name and a stateless `PolynomialFeatures` (LG003); an `X_train` name reused across unrelated examples in one notebook (LG003; lineage is now flow-sensitive); tabular splits flagged because time handling appeared elsewhere in the file (LG006 now needs the split data's own lineage to be time-related); `StratifiedKFold` (dropped from LG006). A code review also found and I fixed: unparseable files and notebooks were silently reported clean (now exit 2 with a message), `../project` or dot-directory paths scanned nothing, a mistyped `--select` hid everything, `interpolate(limit_direction="forward")` was wrongly exempt, and an operator-precedence bug in LG007. Each is a regression test.
 
-**What this does not show**: recall. There is no corpus of known-leaky notebooks yet, so we do not know what fraction of real leaks this catches.
+**Recall**, measured on leaks other people documented (scikit-learn's pitfalls guide, the `temporalcv` failure cases; `docs/recall-on-documented-leaks.md`): **4 of 7 caught (57 %)** before I added rule LG008, **5 of 7 after (in-sample: I wrote that rule after reading the missed example)**. Seven is a small sample. Still missed: a classification threshold tuned on the full data and train/test gaps for multi-step forecasts.
 
 ## Limits
 
@@ -58,7 +59,7 @@ Static analysis can't see runtime data, so some rules are heuristics. Document w
 
 ## Next (tomorrow)
 
-- Build a corpus of known-leaky code (blog posts, Kaggle write-ups on leakage, the paper literature) to measure recall.
+- Grow the documented-leak corpus well beyond 7 examples (Kaggle write-ups, the Kapoor & Narayanan leakage survey) to get a stable recall estimate; add rules for threshold-on-full-data and horizon gaps.
 - Rules to add: target encoding before split, `groupby().transform()` on the full frame, `cross_val_score` on pre-transformed data, `pd.get_dummies` before split.
 - README hero: terminal output on a deliberately leaky example.
 

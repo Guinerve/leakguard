@@ -14,6 +14,7 @@ TRANSFORMERS = {
     "KNNImputer", "IterativeImputer", "PCA", "TruncatedSVD", "SelectKBest", "SelectPercentile", "VarianceThreshold",
     "TfidfVectorizer", "CountVectorizer", "KBinsDiscretizer",
 }
+TARGET_COL = re.compile(r"^(y|target|label|y_true)$", re.I)
 TARGETISH = re.compile(r"(target|label|^y$|_y$|^y_|fwd|forward|future|next|ahead|outcome)", re.I)
 TIME_NAMES = re.compile(r"(?<![a-z])(date|datetime|time|timestamp|dt|year|month|day|period)(?![a-z])", re.I)
 TIME_CALLS = {"to_datetime", "resample", "rolling", "shift", "ewm", "pct_change", "DatetimeIndex", "date_range", "asfreq"}
@@ -180,6 +181,19 @@ def check_source(source: str, filename: str = "<string>") -> list[Finding]:
 
         elif name == "rolling" and _const(_kw(node, "center")) is True:
             add(node, "LG002")
+
+        elif name in {"rolling", "expanding", "ewm"} and not _const(_kw(node, "center")):
+            src = node.func.value if isinstance(node.func, ast.Attribute) else None
+            col = None
+            if isinstance(src, ast.Subscript):
+                col = _const(src.slice) if isinstance(_const(src.slice), str) else None
+            elif isinstance(src, ast.Name):
+                col = src.id
+            # climb to the enclosing statement's chain to see whether a shift happens before the aggregation
+            chain_has_shift = any(isinstance(n, ast.Call) and _call_name(n) == "shift" for n in ast.walk(src)) if src is not None else False
+            assigned_feature = any(not TARGETISH.search(x) for x in assigned.get(id(node), []))
+            if col and TARGET_COL.search(col) and not chain_has_shift and assigned_feature:
+                add(node, "LG008", call=f".{name}()", col=col)
 
         elif name in {"bfill", "backfill"}:
             add(node, "LG004", call=f".{name}()")
