@@ -1,7 +1,7 @@
 [project]
 name = "leakguard"
 version = "0.1.0"
-description = "A linter that catches lookahead bias and data leakage in pandas and scikit-learn code."
+description = "A linter that warns about lookahead-bias and data-leakage patterns in pandas and scikit-learn code."
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = []
