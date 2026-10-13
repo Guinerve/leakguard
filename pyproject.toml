@@ -27,4 +27,4 @@ testpaths = ["tests"]
 
 [tool.ruff]
 line-length = 100
-exclude = ["tests/fixtures"]
+exclude = ["tests/fixtures", "eval/heldout"]
