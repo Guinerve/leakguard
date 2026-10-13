@@ -78,6 +78,8 @@ are reported as INCOMPLETE with exit code 2 instead of exit 0; findings are unch
 
 ### Missed (run 2), by cause
 
+21 files; `nb_424904` appears under two causes.
+
 | Cause | Files |
 |---|---|
 | No rule: resampling (SMOTE, under/over-sampling) before the split | `testOversampler`, `yogmoh_news-category`, `dktalaicha_…smote-adasyn`, `shahules_tackling-class-imbalance` |

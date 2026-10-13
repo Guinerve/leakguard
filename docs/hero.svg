@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="766" height="404" viewBox="0 0 766 404" role="img" aria-label="leakguard output on a deliberately leaky forecast: five findings">
+<rect width="100%" height="100%" rx="10" fill="#0f1419"/>
+<circle cx="24" cy="22" r="5.5" fill="#ff5f57"/><circle cx="42" cy="22" r="5.5" fill="#febc2e"/><circle cx="60" cy="22" r="5.5" fill="#28c840"/>
+<g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" fill="#d6dde4">
+<text x="18" y="58" xml:space="preserve"><tspan fill="#7fd962">$</tspan> leakguard check examples/leaky_forecast.py</text>
+<text x="18" y="77" xml:space="preserve"></text>
+<text x="18" y="96" xml:space="preserve"><tspan fill="#59c2ff">examples/leaky_forecast.py:9:18:</tspan><tspan fill="#ffb454" font-weight="700"> LG004</tspan> `.bfill()` fills gaps with later values. On a</text>
+<text x="18" y="115" xml:space="preserve">    time series this leaks the future; use ffill.</text>
+<text x="18" y="134" xml:space="preserve"><tspan fill="#59c2ff">examples/leaky_forecast.py:10:18:</tspan><tspan fill="#ffb454" font-weight="700"> LG002</tspan> `rolling(..., center=True)` uses values after</text>
+<text x="18" y="153" xml:space="preserve">    each row. Use a trailing window on time-indexed data.</text>
+<text x="18" y="172" xml:space="preserve"><tspan fill="#59c2ff">examples/leaky_forecast.py:11:27:</tspan><tspan fill="#ffb454" font-weight="700"> LG001</tspan> `.shift(-1)` pulls future values into this row.</text>
+<text x="18" y="191" xml:space="preserve">    Fine for building a target, leakage if it feeds a feature.</text>
+<text x="18" y="210" xml:space="preserve"><tspan fill="#59c2ff">examples/leaky_forecast.py:14:5:</tspan><tspan fill="#ffb454" font-weight="700"> LG003</tspan> `StandardScaler().fit_transform` is fitted on</text>
+<text x="18" y="229" xml:space="preserve">    rows that `train_test_split` (line 16) later holds out, so their statistics leak</text>
+<text x="18" y="248" xml:space="preserve">    into training. Split first, fit on train only, or use a Pipeline.</text>
+<text x="18" y="267" xml:space="preserve"><tspan fill="#59c2ff">examples/leaky_forecast.py:16:36:</tspan><tspan fill="#ffb454" font-weight="700"> LG006</tspan> `train_test_split` (shuffle defaults to True)</text>
+<text x="18" y="286" xml:space="preserve">    shuffles time-ordered data, so training rows come from after test rows. Use</text>
+<text x="18" y="305" xml:space="preserve">    shuffle=False or TimeSeriesSplit.</text>
+<text x="18" y="324" xml:space="preserve"></text>
+<text x="18" y="343" xml:space="preserve"><tspan fill="#7d8a96">5 potential leak(s) found.</tspan></text>
+<text x="18" y="362" xml:space="preserve"></text>
+<text x="18" y="381" xml:space="preserve"><tspan fill="#7d8a96">exit code 1  (1 findings · 0 no known pattern, not proof · 2 not fully checked)</tspan></text>
+</g>
+</svg>
