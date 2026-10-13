@@ -14,3 +14,8 @@ df["safe_expanding"] = df["y"].shift(1).expanding().sum()
 # A different column is not the target
 df["other"] = pd.Series([1, 2, 3, 4, 5, 6])
 df["other_roll"] = df["other"].rolling(3).mean()
+
+# Lagged after the statistic: the same past-only window, written the other common way
+df["safe_lag_after"] = df["y"].rolling(3).mean().shift(1)
+df["safe_lag_after_default"] = df["y"].expanding().max().shift()
+df["leak_lead_after"] = df["y"].rolling(3).mean().shift(-1)  # expect: LG008  # expect: LG001

@@ -92,7 +92,7 @@ def iter_files(paths: list[str]):
         if p.is_dir():
             # Hidden/vendored directories are skipped relative to the root given, so `../project` or a
             # project that lives under a dot-directory still gets scanned.
-            yield from sorted(f for f in p.rglob("*") if f.suffix in {".py", ".ipynb"}
+            yield from sorted(f for f in p.rglob("*") if f.suffix in {".py", ".ipynb"} and not f.is_dir()
                               and not any(part.startswith(".") or part in {"node_modules", "__pycache__"}
                                           for part in f.relative_to(p).parts))
         else:

@@ -154,3 +154,17 @@ def test_missing_path_is_not_reported_clean(tmp_path, capsys):
 def test_clean_result_says_it_is_not_proof(tmp_path, capsys):
     assert main(["check", str(write(tmp_path, "ok.py", "x = 1\n"))]) == 0
     assert "not proof" in capsys.readouterr().err
+
+
+def test_null_bytes_are_skipped_not_a_crash(tmp_path, capsys):
+    # Python 3.9 to 3.11 raise ValueError, not SyntaxError, for a null byte (a UTF-16 file, a binary named .py).
+    bad = tmp_path / "utf16.py"
+    bad.write_bytes("x = 1\n".encode("utf-16"))
+    assert main(["check", str(bad), str(write(tmp_path, "ok.py", "x = 1\n"))]) == 2
+    assert "SKIPPED" in capsys.readouterr().err
+
+
+def test_directory_named_like_a_python_file_is_walked_not_read(tmp_path, capsys):
+    (tmp_path / "pkg.py").mkdir()
+    write(tmp_path / "pkg.py", "inner.py", "x = 1\n")
+    assert main(["check", str(tmp_path)]) == 0

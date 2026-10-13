@@ -22,3 +22,9 @@ def constant_fill(df, y):
 def unrelated_frame_filled_with_its_own_mean(df, other, y):
     other = other.fillna(other.mean())
     return other, train_test_split(df, y)
+
+
+def leaky_keyword_and_mode(df, y):
+    df = df.fillna(value=df.median())  # expect: LG007
+    df["b"] = df["b"].fillna(df["b"].mode()[0])  # expect: LG007
+    return train_test_split(df, y)

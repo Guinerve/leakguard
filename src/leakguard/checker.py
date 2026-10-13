@@ -50,6 +50,12 @@ def _kw(node: ast.Call, name: str) -> ast.AST | None:
     return next((k.value for k in node.keywords if k.arg == name), None)
 
 
+def _is_lead(node: ast.Call) -> bool:
+    """Whether a `.shift()` call has a constant negative period, so it pulls later rows up."""
+    n = _const(node.args[0] if node.args else _kw(node, "periods"))
+    return isinstance(n, (int, float)) and n < 0
+
+
 def _suppressions(source: str) -> dict[int, set[str] | None]:
     """line -> set of suppressed rule IDs (None = all)."""
     out: dict[int, set[str] | None] = {}
@@ -138,18 +144,8 @@ def _receiver_root(node: ast.AST) -> str | None:
 
 
 def _is_timey(node: ast.AST) -> bool:
+    """Whether this subtree shows a time-series signal: a time call, a time-like name or a short time-like string."""
     for n in ast.walk(node):
-        if isinstance(n, ast.Call) and _call_name(n) in TIME_CALLS:
-            return True
-        if isinstance(n, ast.Constant) and isinstance(n.value, str) and TIME_NAMES.search(n.value) and len(n.value) < 30:
-            return True
-        if isinstance(n, ast.Name) and TIME_NAMES.search(n.id):
-            return True
-    return False
-
-
-def _has_time_signal(tree: ast.AST) -> bool:
-    for n in ast.walk(tree):
         if isinstance(n, ast.Call) and _call_name(n) in TIME_CALLS:
             return True
         if isinstance(n, ast.Constant) and isinstance(n.value, str) and TIME_NAMES.search(n.value) and len(n.value) < 30:
@@ -184,14 +180,21 @@ def _assigned_names(tree: ast.AST) -> dict[int, list[str]]:
 
 
 def check_source(source: str, filename: str = "<string>") -> list[Finding]:
-    tree = ast.parse(source, filename)  # SyntaxError propagates: an unparseable file must not look clean
+    try:
+        tree = ast.parse(source, filename)  # SyntaxError propagates: an unparseable file must not look clean
+    except ValueError as exc:  # null bytes: Python 3.12 raises SyntaxError, older versions ValueError
+        raise SyntaxError(str(exc)) from exc
     findings: list[Finding] = []
 
     def add(node: ast.AST, rule: str, **fmt: object) -> None:
         findings.append(Finding(node.lineno, node.col_offset, rule, RULES[rule][1].format(**fmt)))
 
     assigned = _assigned_names(tree)
-    timey = _has_time_signal(tree)
+    timey = _is_timey(tree)
+    # Statistics lagged after the fact, `y.rolling(3).mean().shift(1)`, see only past values, like a shift before.
+    lagged = {id(sub) for n in ast.walk(tree)
+              if isinstance(n, ast.Call) and _call_name(n) == "shift" and isinstance(n.func, ast.Attribute)
+              and not _is_lead(n) for sub in ast.walk(n.func.value)}
 
     for node in ast.walk(tree):
         if not isinstance(node, ast.Call):
@@ -199,9 +202,8 @@ def check_source(source: str, filename: str = "<string>") -> list[Finding]:
         name = _call_name(node)
 
         if name == "shift":
-            arg = node.args[0] if node.args else _kw(node, "periods")
-            n = _const(arg)
-            if isinstance(n, (int, float)) and n < 0 and not any(TARGETISH.search(x) for x in assigned.get(id(node), [])):
+            n = _const(node.args[0] if node.args else _kw(node, "periods"))
+            if _is_lead(node) and not any(TARGETISH.search(x) for x in assigned.get(id(node), [])):
                 add(node, "LG001", n=int(n))
 
         elif name == "rolling" and _const(_kw(node, "center")) is True:
@@ -214,10 +216,10 @@ def check_source(source: str, filename: str = "<string>") -> list[Finding]:
                 col = _const(src.slice) if isinstance(_const(src.slice), str) else None
             elif isinstance(src, ast.Name):
                 col = src.id
-            # climb to the enclosing statement's chain to see whether a shift happens before the aggregation
+            # a shift in the receiver chain (before the statistic) or wrapped around it (after) lags the window
             chain_has_shift = any(isinstance(n, ast.Call) and _call_name(n) == "shift" for n in ast.walk(src)) if src is not None else False
             assigned_feature = any(not TARGETISH.search(x) for x in assigned.get(id(node), []))
-            if col and TARGET_COL.search(col) and not chain_has_shift and assigned_feature:
+            if col and TARGET_COL.search(col) and not chain_has_shift and id(node) not in lagged and assigned_feature:
                 add(node, "LG008", call=f".{name}()", col=col)
 
         elif name in {"bfill", "backfill"}:
@@ -290,8 +292,9 @@ def check_source(source: str, filename: str = "<string>") -> list[Finding]:
                     label = f"{_call_name(owner)}().{n.func.attr}"
                 if label and (sc := _first_split_fed(nodes, feeds, n, touched)):
                     add(n, "LG003", call=label, split=sc.lineno)
-            elif n.func.attr == "fillna" and n.args:
-                a0 = n.args[0]
+            elif n.func.attr == "fillna" and (a0 := n.args[0] if n.args else _kw(n, "value")) is not None:
+                if isinstance(a0, ast.Subscript):  # df["a"].mode()[0]
+                    a0 = a0.value
                 if isinstance(a0, ast.Call) and isinstance(a0.func, ast.Attribute) and a0.func.attr in {"mean", "median", "mode"}:
                     recv = _receiver_root(n.func.value)
                     if sc := _first_split_fed(nodes, feeds, n, ({recv} if recv else set()) | stmt_out.get(id(n), set())):
