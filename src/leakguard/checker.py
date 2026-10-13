@@ -87,25 +87,48 @@ def _target_roots(target: ast.AST) -> set[str]:
     return set()
 
 
-def _lineage(nodes: list[ast.AST], seeds: set[str], before_line: int) -> set[str]:
-    """Names that `seeds` were computed from, through assignments before `before_line`."""
-    deps: dict[str, set[str]] = {}
+def _lineage(nodes: list[ast.AST], seeds: set[str], before_line: int) -> dict[str, set[int]]:
+    """Names that `seeds` were computed from, through assignments before `before_line`.
+
+    Maps each name to the lines at which its value was read, so a caller can tell whether a name was rebound in
+    between (notebooks reuse `X` for unrelated datasets). Ignores control flow: the latest assignment above wins.
+    """
+    defs: dict[str, list[tuple[int, set[str], bool]]] = {}
     for n in nodes:
         if isinstance(n, ast.Assign) and n.lineno < before_line:
             used = _used_names(n.value)
             for t in n.targets:
                 for r in _target_roots(t):
-                    if isinstance(t, ast.Name):
-                        deps[r] = set(used)  # plain re-assignment: the latest definition wins
-                    else:
-                        deps.setdefault(r, set()).update(used)  # df["c"] = ... adds to df, doesn't replace it
-    seen, stack = set(seeds), list(seeds)
+                    # plain re-assignment replaces the value; df["c"] = ... adds to df, doesn't replace it
+                    defs.setdefault(r, []).append((n.lineno, used, isinstance(t, ast.Name)))
+    reads: dict[str, set[int]] = {}
+    stack = [(s, before_line) for s in seeds]
     while stack:
-        for d in deps.get(stack.pop(), ()):
-            if d not in seen:
-                seen.add(d)
-                stack.append(d)
-    return seen
+        name, line = stack.pop()
+        if line in reads.setdefault(name, set()):
+            continue
+        reads[name].add(line)
+        for def_line, used, plain in reversed(defs.get(name, [])):
+            if def_line >= line:
+                continue
+            stack.extend((u, def_line) for u in used)
+            if plain:
+                break
+    return reads
+
+
+def _same_binding_read(nodes: list[ast.AST], name: str, at: int, reads: set[int]) -> bool:
+    """Whether `name` as bound at line `at` is the value read at one of `reads` (no plain rebinding in between)."""
+    rebinds = [n.lineno for n in nodes if isinstance(n, ast.Assign) and at < n.lineno
+               and any(isinstance(t, ast.Name) and t.id == name for t in n.targets)]
+    return any(line > at and not any(r < line for r in rebinds) for line in reads)
+
+
+def _first_split_fed(nodes: list[ast.AST], feeds: list[tuple[ast.Call, dict[str, set[int]]]], node: ast.AST,
+                     touched: set[str]) -> ast.Call | None:
+    """The earliest split after `node` whose arrays were computed from any of `touched`, as bound at `node`."""
+    return next((sc for sc, lineage in feeds if sc.lineno > node.lineno
+                 and any(t in lineage and _same_binding_read(nodes, t, node.lineno, lineage[t]) for t in touched)), None)
 
 
 def _receiver_root(node: ast.AST) -> str | None:
@@ -211,29 +234,32 @@ def check_source(source: str, filename: str = "<string>") -> list[Finding]:
             if name != "KFold" or _const(_kw(node, "shuffle")) is True:
                 add(node, "LG006", what=f"`{name}`")
 
-    # Scope-ordered checks: LG003 and LG007 need "earlier than a split, and feeds that split".
+    # Scope-ordered checks: LG003 and LG007 need "earlier than a split, and feeds that split". A notebook often
+    # holds several unrelated splits in one scope, so every split is checked, not only the first.
+    modules = {(a.asname or a.name).split(".")[0] for n in ast.walk(tree)
+               if isinstance(n, (ast.Import, ast.ImportFrom)) for a in n.names}
     scopes: list[ast.AST] = [tree] + [n for n in ast.walk(tree) if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))]
     for scope in scopes:
         nodes = sorted((n for n in _scope_nodes(scope) if hasattr(n, "lineno")), key=lambda n: (n.lineno, n.col_offset))
         split_calls = [n for n in nodes if isinstance(n, ast.Call) and _call_name(n) == "train_test_split"]
         if not split_calls:
             continue
-        split = split_calls[0]
-        split_args = set().union(*(_used_names(a) for a in split.args)) if split.args else set()
-        feeds = _lineage(nodes, split_args, split.lineno)
+        # What each split's arrays were computed from. Imported module names (np, pd) are not data lineage.
+        feeds: list[tuple[ast.Call, dict[str, set[int]]]] = []
+        for sc in split_calls:
+            args = set().union(*(_used_names(a) for a in sc.args)) if sc.args else set()
+            feeds.append((sc, {k: v for k, v in _lineage(nodes, args - modules, sc.lineno).items() if k not in modules}))
 
         # LG006: a random split matters only if the data being split is time-ordered. Evidence: a time-ish call
         # or column name in how those arrays were built (not merely somewhere else in the file).
-        for sc in split_calls:
+        for sc, lineage in feeds:
             if _const(_kw(sc, "shuffle")) is False or _kw(sc, "stratify") is not None:
                 continue
-            args = set().union(*(_used_names(a) for a in sc.args)) if sc.args else set()
-            lineage = _lineage(nodes, args, sc.lineno)
             timey_names: set[str] = set()
             for n in nodes:
                 if isinstance(n, ast.Assign) and n.lineno < sc.lineno and _is_timey(n.value):
                     timey_names |= set().union(*(_target_roots(t) for t in n.targets))
-            if (lineage & timey_names) or any(_is_timey(a) for a in sc.args):
+            if (lineage.keys() & timey_names) or any(_is_timey(a) for a in sc.args):
                 add(sc, "LG006", what="`train_test_split` (shuffle defaults to True)")
 
         stmt_out: dict[int, set[str]] = {}
@@ -243,6 +269,7 @@ def check_source(source: str, filename: str = "<string>") -> list[Finding]:
                 for sub in ast.walk(n.value):
                     stmt_out[id(sub)] = roots
 
+        last_split = split_calls[-1].lineno
         is_transformer: dict[str, bool] = {}  # flow-sensitive: the latest assignment decides
         for n in nodes:
             if isinstance(n, ast.Assign):
@@ -250,7 +277,7 @@ def check_source(source: str, filename: str = "<string>") -> list[Finding]:
                 for t in n.targets:
                     if isinstance(t, ast.Name):
                         is_transformer[t.id] = ctor
-            if not isinstance(n, ast.Call) or n.lineno >= split.lineno or not isinstance(n.func, ast.Attribute):
+            if not isinstance(n, ast.Call) or n.lineno >= last_split or not isinstance(n.func, ast.Attribute):
                 continue
             touched = _used_names(ast.Module(body=[ast.Expr(a) for a in n.args], type_ignores=[])) | stmt_out.get(id(n), set())
             if n.func.attr in {"fit", "fit_transform"}:
@@ -259,14 +286,14 @@ def check_source(source: str, filename: str = "<string>") -> list[Finding]:
                     label = f"{owner.id}.{n.func.attr}"
                 elif isinstance(owner, ast.Call) and _call_name(owner) in TRANSFORMERS:
                     label = f"{_call_name(owner)}().{n.func.attr}"
-                if label and touched & feeds:
-                    add(n, "LG003", call=label, split=split.lineno)
+                if label and (sc := _first_split_fed(nodes, feeds, n, touched)):
+                    add(n, "LG003", call=label, split=sc.lineno)
             elif n.func.attr == "fillna" and n.args:
                 a0 = n.args[0]
                 if isinstance(a0, ast.Call) and isinstance(a0.func, ast.Attribute) and a0.func.attr in {"mean", "median", "mode"}:
                     recv = _receiver_root(n.func.value)
-                    if (({recv} if recv else set()) | stmt_out.get(id(n), set())) & feeds:
-                        add(n, "LG007", stat=f".{a0.func.attr}()", split=split.lineno)
+                    if sc := _first_split_fed(nodes, feeds, n, ({recv} if recv else set()) | stmt_out.get(id(n), set())):
+                        add(n, "LG007", stat=f".{a0.func.attr}()", split=sc.lineno)
 
     sup = _suppressions(source)
     kept = []
