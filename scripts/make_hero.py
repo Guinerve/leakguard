@@ -45,7 +45,7 @@ def main() -> int:
         wrapped = textwrap.wrap(line, WIDTH_CHARS, subsequent_indent="    ") or [""]
         rows.append(("finding", wrapped[0]))
         rows += [("plain", w) for w in wrapped[1:]]
-    rows += [("plain", ""), ("note", f"exit code {code}  (1 findings · 0 no known pattern, not proof · 2 not fully checked)")]
+    rows += [("plain", ""), ("note", f"exit code {code}.  Codes: 1 findings, 0 no known pattern (not proof), 2 not fully checked.")]
 
     width = int(PAD * 2 + WIDTH_CHARS * CHAR_W)
     height = int(PAD * 2 + 26 + len(rows) * LINE_H)

@@ -1,4 +1,4 @@
-"""A next-day sales forecast with five common leaks. Deliberately wrong: run `leakguard check examples/`."""
+"""A next day sales forecast with five common leaks. Deliberately wrong: run `leakguard check examples/`."""
 import pandas as pd
 from sklearn.linear_model import Ridge
 from sklearn.model_selection import train_test_split

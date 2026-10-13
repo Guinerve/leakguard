@@ -264,7 +264,7 @@ def check_source(source: str, filename: str = "<string>") -> list[Finding]:
                 if isinstance(n, ast.Assign) and n.lineno < sc.lineno and _is_timey(n.value):
                     timey_names |= set().union(*(_target_roots(t) for t in n.targets))
             if (lineage.keys() & timey_names) or any(_is_timey(a) for a in sc.args):
-                add(sc, "LG006", what="`train_test_split` (shuffle defaults to True)")
+                add(sc, "LG006", what="`train_test_split` (shuffle is True by default)")
 
         stmt_out: dict[int, set[str]] = {}
         for n in nodes:

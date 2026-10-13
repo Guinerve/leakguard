@@ -1,44 +1,52 @@
-"""Rule catalogue: ID -> (short name, message template, false-positive notes)."""
+"""Rule catalogue: ID -> (short name, message template, notes on when the rule can be wrong)."""
 
 RULES: dict[str, tuple[str, str, str]] = {
     "LG001": (
         "negative-shift",
-        "`.shift({n})` pulls future values into this row. Fine for building a target, leakage if it feeds a feature.",
-        "Heuristic: skipped when assigned to a name that looks like a target (target, label, y, fwd, future, next).",
+        "`.shift({n})` moves later values into this row. This is correct for a target, but it is a leak in a feature.",
+        "Not reported when the result goes to a name that looks like a target (target, label, y, fwd, future, next).",
     ),
     "LG002": (
         "centered-rolling",
-        "`rolling(..., center=True)` uses values after each row. Use a trailing window on time-indexed data.",
-        "Safe on non-temporal data such as image or spatial smoothing.",
+        "`rolling(..., center=True)` uses values after each row. On time series data, remove center=True.",
+        "Correct on data that is not ordered in time, for example image or map smoothing.",
     ),
     "LG003": (
         "fit-before-split",
-        "`{call}` is fitted on rows that `train_test_split` (line {split}) later holds out, so their statistics leak into training. Split first, fit on train only, or use a Pipeline.",
-        "Checks every train_test_split in a function or module scope against the fits earlier in that scope; fits in other scopes, and leaks into cross-validation folds, are not seen.",
+        ("`{call}` learns from rows that `train_test_split` (line {split}) later puts in the test set. Their statistics "
+        "leak into training. Split first and fit on the training rows only, or use a Pipeline."),
+        ("Compares each train_test_split with the earlier fits in the same function or module. It does not see fits "
+        "in other functions, or leaks into cross validation folds."),
     ),
     "LG004": (
         "backward-fill",
-        "`{call}` fills gaps with later values. On a time series this leaks the future; use ffill.",
-        "Safe if the data is not time-ordered, or the fill is applied inside the training fold only.",
+        "`{call}` fills gaps with later values. On a time series, this leaks the future. Use ffill() instead.",
+        "Correct if the data is not ordered in time, or if the fill uses only the training rows.",
     ),
     "LG005": (
         "forward-asof-merge",
-        "`merge_asof(direction={direction!r})` matches rows to future timestamps. Use direction='backward'.",
-        "Safe when the right table is deliberately aligned to a known later event.",
+        "`merge_asof(direction={direction!r})` can match a row to a later timestamp. Use direction='backward'.",
+        "Correct when you align the right table to a known later event on purpose.",
     ),
     "LG006": (
         "random-split-on-time-data",
-        "{what} shuffles time-ordered data, so training rows come from after test rows. Use shuffle=False or TimeSeriesSplit.",
-        "Only reported when the file shows time-series signals (datetime parsing, shift, rolling, date columns).",
+        ("{what} shuffles data that is ordered in time, so some training rows come after test rows. "
+        "Use shuffle=False or TimeSeriesSplit."),
+        ("For train_test_split, reported only when the split data comes from time series code (datetime parsing, "
+        "shift, rolling, date columns). For KFold and ShuffleSplit, one such sign anywhere in the file is enough."),
     ),
     "LG007": (
         "global-statistic-imputation",
-        "`fillna` with a statistic ({stat}) computed on rows that `train_test_split` (line {split}) later holds out leaks their values. Compute it on the training rows only.",
-        "Only reported when the fill happens earlier than a train_test_split in the same scope.",
+        ("`fillna` uses a statistic ({stat}) of rows that `train_test_split` (line {split}) later puts in the test "
+        "set. This leaks their values. Calculate the statistic on the training rows only."),
+        ("Reported only when the fill comes before a train_test_split in the same function or module, and its data "
+        "reaches that split."),
     ),
     "LG008": (
         "unlagged-target-statistic",
-        "`{call}` on the target column `{col}` includes the current value, so a feature built from it for predicting `{col}` leaks it. Apply `.shift(1)` before the rolling/expanding/ewm statistic.",
-        "Heuristic: fires when the source column name looks like a target (y, target, label, ...) and no `.shift` appears in the chain. Safe if the feature predicts a different, later quantity.",
+        ("`{call}` on the target column `{col}` includes the current value. A feature made from it leaks `{col}` "
+        "into the model. Add `.shift(1)` before or after the statistic."),
+        ("Reported when the column name is y, target, label or y_true and no `.shift` comes before or after the "
+        "statistic. Correct if the feature predicts a different, later quantity."),
     ),
 }

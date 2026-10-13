@@ -37,7 +37,7 @@ def _code_cells(nb: dict) -> list[str]:
     elif "worksheets" in nb:  # nbformat 3
         cells = [c for ws in nb["worksheets"] for c in ws.get("cells", [])]
     else:
-        raise ValueError("no cells found; not a notebook format leakguard understands")
+        raise ValueError("no cells found, so this is not a notebook format that leakguard can read")
     out = []
     for cell in cells:
         if cell.get("cell_type") == "code":
@@ -133,14 +133,18 @@ def check_file(path: Path, incomplete: list[str] | None = None) -> list[Finding]
 
 
 def main(argv: list[str] | None = None) -> int:
-    p = argparse.ArgumentParser(prog="leakguard", description="Catch lookahead bias and data leakage.")
+    p = argparse.ArgumentParser(
+        prog="leakguard",
+        description="Warn about lookahead bias and data leakage patterns in pandas and scikit-learn code. "
+                    "leakguard reads the code and never runs it. A clean result is not proof of clean data.",
+    )
     p.add_argument("--version", action="version", version=__version__)
     sub = p.add_subparsers(dest="cmd", required=True)
-    c = sub.add_parser("check", help="Check files or directories")
-    c.add_argument("paths", nargs="+")
-    c.add_argument("--format", choices=["text", "json"], default="text")
-    c.add_argument("--select", help="Comma-separated rule IDs to run (default: all)")
-    sub.add_parser("rules", help="List rules")
+    c = sub.add_parser("check", help="check .py and .ipynb files, or the directories that contain them")
+    c.add_argument("paths", nargs="+", help="files or directories to check")
+    c.add_argument("--format", choices=["text", "json"], default="text", help="output format (default: text)")
+    c.add_argument("--select", help="rule IDs to run, separated by commas, for example LG003,LG007 (default: all)")
+    sub.add_parser("rules", help="list the rules and when each one can be wrong")
     args = p.parse_args(argv)
 
     if args.cmd == "rules":
@@ -150,7 +154,7 @@ def main(argv: list[str] | None = None) -> int:
 
     select = {s.strip().upper() for s in args.select.split(",")} if args.select else None
     if select and (unknown := select - set(RULES)):
-        p.error(f"unknown rule id(s): {', '.join(sorted(unknown))}. Run `leakguard rules`.")
+        p.error(f"unknown rule ID: {', '.join(sorted(unknown))}. Run `leakguard rules` to see the list.")
     results, skipped, incomplete, scanned = [], [], [], 0
     for f in iter_files(args.paths):
         scanned += 1
@@ -174,8 +178,8 @@ def main(argv: list[str] | None = None) -> int:
         if results:
             print(f"\n{len(results)} potential leak(s) found.", file=sys.stderr)
     if not results and scanned and not (skipped or incomplete):
-        print("leakguard: no known leak patterns found. This is not proof the data is leak-free: "
-              "leakguard only recognises the patterns listed by `leakguard rules`.", file=sys.stderr)
+        print("leakguard: no known leak patterns found. This is not proof that the data is free of leaks. "
+              "leakguard knows only the patterns in `leakguard rules`.", file=sys.stderr)
     if skipped or incomplete or scanned == 0:
         return 2  # could not check everything: never report success
     return 1 if results else 0
