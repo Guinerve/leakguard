@@ -14,11 +14,11 @@ TRANSFORMERS = {
     "KNNImputer", "IterativeImputer", "PCA", "TruncatedSVD", "SelectKBest", "SelectPercentile", "VarianceThreshold",
     "TfidfVectorizer", "CountVectorizer", "KBinsDiscretizer",
 }
-TARGET_COL = re.compile(r"^(y|target|label|y_true)$", re.I)
-TARGETISH = re.compile(r"(target|label|^y$|_y$|^y_|fwd|forward|future|next|ahead|outcome)", re.I)
-TIME_NAMES = re.compile(r"(?<![a-z])(date|datetime|time|timestamp|dt|year|month|day|period)(?![a-z])", re.I)
+TARGET_COL = re.compile(r"^(y|target|label|y_true)$", re.IGNORECASE)
+TARGETISH = re.compile(r"(target|label|^y$|_y$|^y_|fwd|forward|future|next|ahead|outcome)", re.IGNORECASE)
+TIME_NAMES = re.compile(r"(?<![a-z])(date|datetime|time|timestamp|dt|year|month|day|period)(?![a-z])", re.IGNORECASE)
 TIME_CALLS = {"to_datetime", "resample", "rolling", "shift", "ewm", "pct_change", "DatetimeIndex", "date_range", "asfreq"}
-IGNORE = re.compile(r"#\s*leakguard:\s*ignore(?:\[([A-Z0-9,\s]+)\])?", re.I)
+IGNORE = re.compile(r"#\s*leakguard:\s*ignore(?:\[([A-Z0-9,\s]+)\])?", re.IGNORECASE)
 
 
 @dataclass(frozen=True, order=True)
@@ -186,8 +186,10 @@ def _assigned_names(tree: ast.AST) -> dict[int, list[str]]:
 def check_source(source: str, filename: str = "<string>") -> list[Finding]:
     tree = ast.parse(source, filename)  # SyntaxError propagates: an unparseable file must not look clean
     findings: list[Finding] = []
-    add = lambda node, rule, **fmt: findings.append(  # noqa: E731
-        Finding(node.lineno, node.col_offset, rule, RULES[rule][1].format(**fmt)))
+
+    def add(node: ast.AST, rule: str, **fmt: object) -> None:
+        findings.append(Finding(node.lineno, node.col_offset, rule, RULES[rule][1].format(**fmt)))
+
     assigned = _assigned_names(tree)
     timey = _has_time_signal(tree)
 

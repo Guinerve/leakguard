@@ -3,8 +3,20 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.9", "3.13"]  # oldest supported and current
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
-      - run: uv sync
+        with:
+          python-version: ${{ matrix.python }}
+      - run: uv sync --locked
       - run: uv run pytest -q
+      - run: uv run ruff check src tests eval scripts examples
+      - name: Examples behave as the README says
+        run: |
+          uv run leakguard check examples/fixed_forecast.py
+          set +e; uv run leakguard check examples/leaky_forecast.py; test $? -eq 1
+      - name: README image matches real output
+        run: uv run python scripts/make_hero.py && git diff --exit-code docs/hero.svg

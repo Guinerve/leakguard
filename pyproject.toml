@@ -1,10 +1,28 @@
 [project]
 name = "leakguard"
-version = "0.1.0"
+version = "0.2.0"
 description = "A linter that warns about lookahead-bias and data-leakage patterns in pandas and scikit-learn code."
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = []
+license = { text = "MIT" }
+authors = [{ name = "Guinerve" }]
+keywords = ["linter", "data-leakage", "lookahead-bias", "pandas", "scikit-learn", "machine-learning", "static-analysis", "flake8"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Framework :: Flake8",
+    "Framework :: Jupyter",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development :: Quality Assurance",
+]
+
+[project.urls]
+Repository = "https://github.com/Guinerve/leakguard"
+Evaluation = "https://github.com/Guinerve/leakguard/blob/main/docs/heldout-evaluation.md"
 
 [project.scripts]
 leakguard = "leakguard.cli:main"
@@ -28,3 +46,6 @@ testpaths = ["tests"]
 [tool.ruff]
 line-length = 100
 exclude = ["tests/fixtures", "eval/heldout"]
+
+[tool.hatch.build.targets.sdist]
+exclude = ["eval/heldout"]  # third-party corpus for the evaluation; lives in the repo, not the package
