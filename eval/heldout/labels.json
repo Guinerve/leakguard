@@ -1,0 +1,338 @@
+[
+ {
+  "file": "ase22/test0.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "be8e9bd1cb31648beffd0ba599660f57292acc892cbb1d7cdcc042cb04ccb9d9"
+ },
+ {
+  "file": "ase22/test1.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "afde9a3cef2b99b7b6eb1ff57a4039bdae1fe5235d566b116a55f8b9bfc97bc4"
+ },
+ {
+  "file": "ase22/test2.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "47d1fd8b9865074e268756ad38982cc6231e017271c22fd81faed715d02461b1"
+ },
+ {
+  "file": "ase22/test3.py",
+  "label": "clean",
+  "leak_type": null,
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "cc45652e9fc5c7e3691c5bcbc7025b11ff7bd508f25e786c3f9c59e02b890e8a"
+ },
+ {
+  "file": "ase22/test4.py",
+  "label": "clean",
+  "leak_type": null,
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "1ad6677bd8e3dfbc1f634218e8a0f6d1e77ae8147ba9f36167f6f50e5b6e7695"
+ },
+ {
+  "file": "ase22/titanic0.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "1f6a0610b429aecbdbf01905a1df7c47b99435719098688be818e825470d3ba6"
+ },
+ {
+  "file": "ase22/nb_344873.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "176c2d5ea4457d21c05d5ad2c08a47ef40e4ebf5088b0108dd6fa85dd1298d88"
+ },
+ {
+  "file": "ase22/nb_100841.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "64d6d7b86325e4f80770e5285994366d80f90d07297b390f44ec7a08afe00edd"
+ },
+ {
+  "file": "ase22/nb_334422.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "3850ddc9998c9e711b0bc32b11789958da7f67a8fb8a8289d1b2b10654515c74"
+ },
+ {
+  "file": "ase22/nb_132929.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "2729a86c303e935b1cb808e43493256394e303ac6e7a4581ddbe660b456b8cd1"
+ },
+ {
+  "file": "ase22/nb_194503.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "6df500af0e1f84d20596a0fadc488cddbeb0268830743a118beab060d4b8e62f"
+ },
+ {
+  "file": "ase22/nb_362989.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "6b78b8b301c702951e7184d3d481d86798c0cf926706a3543b21607dfbc47f28"
+ },
+ {
+  "file": "ase22/nb_473437.py",
+  "label": "clean",
+  "leak_type": null,
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "c8effdfb3fab1c7e8d499e445e0b524518171395e29dfca56e081c0d94f42d9b"
+ },
+ {
+  "file": "ase22/nb_205857.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "07026ea918d95de32042e094b9f60925bd2aeb6f0fcfe7a365c99ce5ddbae5b8"
+ },
+ {
+  "file": "ase22/nb_471253.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "d57b5fbe98432ae2ec79c9a5c074d8d808b36aff1f684cc08b3f3061fbd4a0ce"
+ },
+ {
+  "file": "ase22/nb_303674.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "71315f3ab33f162b1a12bc27bd7eb06c07b5e15d11e13f1dd01f68c1b5948fa4"
+ },
+ {
+  "file": "ase22/nb_1020535.py",
+  "label": "clean",
+  "leak_type": null,
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "7856d1caf0a1155b5ff0c37e728f284489e56621decbc1016c1d4ce918a9ecad"
+ },
+ {
+  "file": "ase22/nb_276778.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "aec7169ae1a350c774992728d1fa5f2484d5da370a638eb56db748e8d4dfd138"
+ },
+ {
+  "file": "ase22/nb_277256.py",
+  "label": "clean",
+  "leak_type": null,
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "e9239bbf59d462be403decd21d8223f50d47f3350d594f7174c0b5798343f3b1"
+ },
+ {
+  "file": "ase22/nb_387986.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "1d45ee86e2ab35fdf72f6833c5a3b4993edb3aa58698750771190af28d592113"
+ },
+ {
+  "file": "ase22/nb_344814.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "10e7d011bd1248a2c9943cc067ea12142ebefb5f3e84c1645817ad95781b8678"
+ },
+ {
+  "file": "ase22/nb_282393.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "0f3c561e62c4459a06d96722b02d5007cdd5939aeae5ef44fefd0d3f9f4bd972"
+ },
+ {
+  "file": "ase22/nb_175471.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "5ebb749dfeffd787bbccc4db80d0cd0d0952c2900687bd0a39e0125ee28bd9c7"
+ },
+ {
+  "file": "ase22/nb_248151.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "12236a0548e5f62bb8a931e27526f6f4a28ad6c5f81c3204e4ed11031e5b0840"
+ },
+ {
+  "file": "ase22/nb_273933.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "beebaef4331fc18e7146db0c4ed6973d13d15c2041733476f6f28d14329d9d51"
+ },
+ {
+  "file": "ase22/nb_424904.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "836c8edbbf35074e4d354a02424de0175aa8e97a86b337c46eee5b058c6f2f37"
+ },
+ {
+  "file": "ase22/nb_292583.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "37fc2a2e109b4f7055ef0b9c8804b5434dd9d27c21379b85ae190134d34f773d"
+ },
+ {
+  "file": "ase22/nb_481597.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "91f6e22ebb841c9d4b5c5e84c781828bb89c4d15f1fa6532b85b8184657a889f"
+ },
+ {
+  "file": "ase22/nb_1080148.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "44cc0609fdf972afa8ea02f32a99d88fecdebd5172d62612f584ad382c4de8e2"
+ },
+ {
+  "file": "ase22/nb_1090319.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "53992a48509753755ec045f98a07f97828a9c03c57169cc798e022ee692a33dd"
+ },
+ {
+  "file": "ase22/nb_1255091.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "a6dce60ee1c061d145d76740bcbfe8023b20594a5366854ec2101660ac067868"
+ },
+ {
+  "file": "ase22/nb_504.py",
+  "label": "leaky",
+  "leak_type": "preprocessing",
+  "labelled_for": "preprocessing",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_preprocessing.py",
+  "sha256": "95de0cc90e6b7ef44fb283623b8a78c1472327b2429e32f45c3363615165df8a"
+ },
+ {
+  "file": "ase22/testOversampler.py",
+  "label": "leaky",
+  "leak_type": "overlap",
+  "labelled_for": "overlap",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_overlap.py",
+  "sha256": "8f92bcf59026e1f6cc878ae70f4f8c29b3a5dcd8d8dd462fbee2a7b42286d0fc"
+ },
+ {
+  "file": "ase22/testOversampler2.py",
+  "label": "clean",
+  "leak_type": null,
+  "labelled_for": "overlap",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_overlap.py",
+  "sha256": "5add4a2d106c15a15213585bf01cee2e1abf5c0359b6c6e4c1567418d7985786"
+ },
+ {
+  "file": "ase22/yogmoh_news-category.py",
+  "label": "leaky",
+  "leak_type": "overlap",
+  "labelled_for": "overlap",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_overlap.py",
+  "sha256": "63c3eef18116e088cf5f37c488427a9fab9e6ed43e0f43b234a48e39d1213622"
+ },
+ {
+  "file": "ase22/dktalaicha_credit-card-fraud-detection-using-smote-adasyn.py",
+  "label": "leaky",
+  "leak_type": "overlap",
+  "labelled_for": "overlap",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_overlap.py",
+  "sha256": "39020e0a9daf6bf70498be9f4321d01435ec6a287905d9494c2b3b054e43bb35"
+ },
+ {
+  "file": "ase22/nb_598984.py",
+  "label": "clean",
+  "leak_type": null,
+  "labelled_for": "overlap",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_overlap.py",
+  "sha256": "04b2dfc436f9aace4dbe26d6a73745f981718bdca95f4e6b35331d6615869e73"
+ },
+ {
+  "file": "ase22/shahules_tackling-class-imbalance.py",
+  "label": "leaky",
+  "leak_type": "overlap",
+  "labelled_for": "overlap",
+  "source": "https://github.com/malusamayo/leakage-analysis/tree/a7d038bfec6b8ddbe21d87dde54b806aecdd79f7/tests/test_overlap.py",
+  "sha256": "1e09931dc654f47c775db7f1cbaf3e3107b2621be5808fb95048aa5c0d2402aa"
+ },
+ {
+  "file": "sklearn/plot_cyclical_feature_engineering.py",
+  "label": "clean",
+  "leak_type": null,
+  "labelled_for": "any (official example using TimeSeriesSplit)",
+  "source": "https://github.com/scikit-learn/scikit-learn/blob/bebaf70573b6fe756bc93aca5534f3191c18c4eb/examples/applications/plot_cyclical_feature_engineering.py",
+  "sha256": "537acf0a7a0d55016b65400f0f965dab21219a421cf2c572ed0452fe0c9cc76e"
+ },
+ {
+  "file": "sklearn/plot_time_series_lagged_features.py",
+  "label": "clean",
+  "leak_type": null,
+  "labelled_for": "any (official example using TimeSeriesSplit)",
+  "source": "https://github.com/scikit-learn/scikit-learn/blob/bebaf70573b6fe756bc93aca5534f3191c18c4eb/examples/applications/plot_time_series_lagged_features.py",
+  "sha256": "49191414a48b76aa1ecea246d642ceb7e7a69dcda8197795ea0397c17707d04f"
+ },
+ {
+  "file": "marketcalls/gmm_full_series.py",
+  "label": "leaky",
+  "leak_type": "no-held-out-data",
+  "labelled_for": "look-ahead bias",
+  "source": "https://www.marketcalls.in/python/understanding-look-ahead-bias-and-how-to-avoid-it-in-trading-strategies.html (code block 2, 'Example: The Polynomial Regression + GMM Strategy')",
+  "sha256": "4bf3a630d4aa7e8be163d6d057bcb1cc55a68c58593bd76b4685b9a70309892c"
+ },
+ {
+  "file": "marketcalls/walk_forward.py",
+  "label": "clean",
+  "leak_type": null,
+  "labelled_for": "look-ahead bias",
+  "source": "https://www.marketcalls.in/python/understanding-look-ahead-bias-and-how-to-avoid-it-in-trading-strategies.html (code block 3, 'Code Example: Walk-Forward or Incremental Training')",
+  "sha256": "b5b90a2007aeef36523e39b5ed9b5d6cb19877d8fad8fbce1766c3a6820351c8"
+ }
+]

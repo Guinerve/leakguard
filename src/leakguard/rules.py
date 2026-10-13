@@ -13,8 +13,8 @@ RULES: dict[str, tuple[str, str, str]] = {
     ),
     "LG003": (
         "fit-before-split",
-        "`{call}` is fitted on all rows before `train_test_split` (line {split}): test-set statistics leak into training. Split first, fit on train only, or use a Pipeline.",
-        "Only checks fits that occur earlier in the same function or module scope as a train_test_split call.",
+        "`{call}` is fitted on rows that `train_test_split` (line {split}) later holds out, so their statistics leak into training. Split first, fit on train only, or use a Pipeline.",
+        "Checks every train_test_split in a function or module scope against the fits earlier in that scope; fits in other scopes, and leaks into cross-validation folds, are not seen.",
     ),
     "LG004": (
         "backward-fill",
@@ -33,7 +33,7 @@ RULES: dict[str, tuple[str, str, str]] = {
     ),
     "LG007": (
         "global-statistic-imputation",
-        "`fillna` with a statistic ({stat}) computed on all rows before `train_test_split` (line {split}) leaks test-set values. Compute it on the training rows only.",
+        "`fillna` with a statistic ({stat}) computed on rows that `train_test_split` (line {split}) later holds out leaks their values. Compute it on the training rows only.",
         "Only reported when the fill happens earlier than a train_test_split in the same scope.",
     ),
     "LG008": (

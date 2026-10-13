@@ -1,5 +1,7 @@
 # Recall on documented leaks (2026-10-13)
 
+Superseded as the headline number by the larger, untouched set in `docs/heldout-evaluation.md`.
+
 The false-positive runs only show what `leakguard` over-reports. This measures what it misses, using leaks that other
 people documented and labelled as wrong, not examples I wrote.
 
